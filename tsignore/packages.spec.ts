@@ -1,6 +1,7 @@
 import { join } from "path"
 import expect from "./expect"
 import packages, { RecordMatcher } from "../src/packages"
+import tinyId from "../src/tinyId"
 
 describe("packages", () => {
   const cwdPath = join(__dirname, "fixtures")
@@ -9,26 +10,29 @@ describe("packages", () => {
   const matcher: RecordMatcher = (arg, { name }) =>
     arg === name
 
-  beforeEach(() => packages.reset())
+  beforeEach(() => {
+    packages.reset()
+    tinyId.reset()
+  })
 
   it("should load", async () => {
     await packages.load({ cwdPath, jsonPath, pkgsPath })
 
     expect(packages.records[cwdPath]).toEqual([
       {
-        id: 0,
+        id: "a",
         name: "dir1",
       },
       {
-        id: 1,
+        id: "b",
         name: "dir2",
       },
       {
-        id: 2,
+        id: "c",
         name: "file1.ts",
       },
       {
-        id: 3,
+        id: "d",
         name: "file2.ts",
       },
     ])
@@ -44,11 +48,11 @@ describe("packages", () => {
 
     expect(packages.records[cwdPath]).toEqual([
       {
-        id: 0,
+        id: "a",
         name: "dir1",
       },
       {
-        id: 1,
+        id: "b",
         name: "dir2",
       },
     ])
@@ -64,11 +68,11 @@ describe("packages", () => {
 
     expect(packages.records[cwdPath]).toEqual([
       {
-        id: 0,
+        id: "a",
         name: "file1.ts",
       },
       {
-        id: 1,
+        id: "b",
         name: "file2.ts",
       },
     ])
@@ -80,7 +84,7 @@ describe("packages", () => {
     ])
 
     expect(results).toEqual([
-      { arg: "file1.ts", id: 0, newRecord: true },
+      { arg: "file1.ts", id: "a", newRecord: true },
     ])
   })
 
@@ -99,9 +103,9 @@ describe("packages", () => {
     })
 
     expect(results).toEqual([
-      { name: "file1.ts", id: 2 },
-      { name: "file1.ts", id: 4 },
-      { arg: "newFile.ts", id: 5, newRecord: true },
+      { name: "file1.ts", id: "c" },
+      { name: "file1.ts", id: "e" },
+      { arg: "newFile.ts", id: "f", newRecord: true },
     ])
   })
 
@@ -124,11 +128,11 @@ describe("packages", () => {
     })
 
     expect(results).toEqual([
-      { name: "file1", id: 2 },
-      { name: "file1", id: 4 },
+      { name: "file1", id: "c" },
+      { name: "file1", id: "e" },
       {
         arg: "newFile.ts",
-        id: 5,
+        id: "f",
         name: "newFile",
         newRecord: true,
       },
@@ -150,6 +154,6 @@ describe("packages", () => {
       unique: true,
     })
 
-    expect(results).toEqual([{ name: "file2.ts", id: 3 }])
+    expect(results).toEqual([{ name: "file2.ts", id: "d" }])
   })
 })

@@ -1,10 +1,11 @@
 import { pathExists, readJson, writeJson } from "fs-extra"
 
 import files from "./files"
+import tinyId from "./tinyId"
 
 export interface PackageRecord {
   arg?: string
-  id?: number
+  id?: string
   name?: string
   newRecord?: boolean
 }
@@ -24,10 +25,20 @@ export interface AppendOptions {
 }
 
 export interface FindOptions {
+  appendNew?: boolean
   forceNew?: boolean
   matcher?: RecordMatcher
   modify?: RecordModifier
   unique?: boolean
+}
+
+export interface LoadOptions {
+  cwdPath: string
+  jsonPath: string
+  pkgsPath: string
+  dirsOnly?: boolean
+  filesOnly?: boolean
+  modify?: RecordModifier
 }
 
 export interface SaveOptions {
@@ -82,12 +93,7 @@ export class Packages {
       records = existingRecords
     }
 
-    this.updateIds(
-      newRecords,
-      records.length
-        ? records[records.length - 1].id + 1
-        : 0
-    )
+    this.updateIds(newRecords)
 
     records = records.concat(newRecords)
     records = await this.reload(
@@ -95,6 +101,12 @@ export class Packages {
       records,
       options.modify
     )
+
+    if (options.appendNew) {
+      this.append(cwdPath, records, {
+        onlyNewRecords: true,
+      })
+    }
 
     if (options.unique) {
       const found = {}
@@ -115,13 +127,8 @@ export class Packages {
     pkgsPath,
     dirsOnly,
     filesOnly,
-  }: {
-    cwdPath: string
-    jsonPath: string
-    pkgsPath: string
-    dirsOnly?: boolean
-    filesOnly?: boolean
-  }): Promise<PackageRecord[]> {
+    modify,
+  }: LoadOptions): Promise<PackageRecord[]> {
     let records: PackageRecord[] = []
 
     if (await pathExists(jsonPath)) {
@@ -133,7 +140,11 @@ export class Packages {
       records = pkgs.sort().map(name => ({ name }))
     }
 
-    this.append(cwdPath, records)
+    this.append(
+      cwdPath,
+      await this.reload(cwdPath, records, modify)
+    )
+
     return this.records[cwdPath]
   }
 
@@ -186,9 +197,9 @@ export class Packages {
     })
   }
 
-  updateIds(records: PackageRecord[], start = 0): void {
+  updateIds(records: PackageRecord[]): void {
     records.forEach(
-      (record, index) => (record.id = start + index)
+      record => (record.id = record.id || tinyId.generate())
     )
   }
 }
