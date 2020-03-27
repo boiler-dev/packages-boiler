@@ -1,8 +1,10 @@
+import { join } from "path"
 import {
   ActionBoiler,
   PromptBoiler,
   BoilerAction,
   BoilerPrompt,
+  fs,
 } from "boiler-dev"
 
 export const prompt: PromptBoiler = async () => {
@@ -18,7 +20,7 @@ export const prompt: PromptBoiler = async () => {
   return prompts
 }
 
-export const install: ActionBoiler = async () => {
+export const install: ActionBoiler = async ({ paths }) => {
   const actions: BoilerAction[] = []
 
   actions.push({
@@ -31,10 +33,28 @@ export const install: ActionBoiler = async () => {
     source: ["git@github.com:boiler-dev/files-boiler.git"],
   })
 
+  await fs.ensureDir(
+    join(paths.cwdPath, "test/fixtures/packages/dir1")
+  )
+
+  await fs.ensureDir(
+    join(paths.cwdPath, "test/fixtures/packages/dir2")
+  )
+
+  await fs.ensureFile(
+    join(paths.cwdPath, "test/fixtures/packages/file1.ts")
+  )
+
+  await fs.ensureFile(
+    join(paths.cwdPath, "test/fixtures/packages/file2.ts")
+  )
+
   return actions
 }
 
-export const uninstall: ActionBoiler = async () => {
+export const uninstall: ActionBoiler = async ({
+  paths,
+}) => {
   const actions: BoilerAction[] = []
 
   actions.push({
@@ -42,6 +62,10 @@ export const uninstall: ActionBoiler = async () => {
     source: ["fs-extra"],
     uninstall: true,
   })
+
+  await fs.rmdir(
+    join(paths.cwdPath, "test/fixtures/packages")
+  )
 
   return actions
 }
