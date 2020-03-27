@@ -16,7 +16,7 @@ describe("packages", () => {
   })
 
   it("should load", async () => {
-    await packages.load({ cwdPath, jsonPath, pkgsPath })
+    await packages.load(cwdPath, jsonPath, pkgsPath)
 
     expect(packages.records[cwdPath]).toEqual([
       {
@@ -39,10 +39,7 @@ describe("packages", () => {
   })
 
   it("should load dirs only", async () => {
-    await packages.load({
-      cwdPath,
-      jsonPath,
-      pkgsPath,
+    await packages.load(cwdPath, jsonPath, pkgsPath, {
       dirsOnly: true,
     })
 
@@ -59,10 +56,7 @@ describe("packages", () => {
   })
 
   it("should load files only", async () => {
-    await packages.load({
-      cwdPath,
-      jsonPath,
-      pkgsPath,
+    await packages.load(cwdPath, jsonPath, pkgsPath, {
       filesOnly: true,
     })
 
@@ -89,11 +83,7 @@ describe("packages", () => {
   })
 
   it("should find with matcher", async () => {
-    await packages.load({
-      cwdPath,
-      jsonPath,
-      pkgsPath,
-    })
+    await packages.load(cwdPath, jsonPath, pkgsPath)
 
     packages.append(cwdPath, [{ name: "file1.ts" }])
 
@@ -110,11 +100,7 @@ describe("packages", () => {
   })
 
   it("should find with modifier", async () => {
-    await packages.load({
-      cwdPath,
-      jsonPath,
-      pkgsPath,
-    })
+    await packages.load(cwdPath, jsonPath, pkgsPath)
 
     packages.append(cwdPath, [{ name: "file1.ts" }])
 
@@ -140,11 +126,7 @@ describe("packages", () => {
   })
 
   it("should find unique", async () => {
-    await packages.load({
-      cwdPath,
-      jsonPath,
-      pkgsPath,
-    })
+    await packages.load(cwdPath, jsonPath, pkgsPath)
 
     packages.append(cwdPath, [{ name: "file2.ts" }])
 

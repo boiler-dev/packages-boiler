@@ -33,11 +33,12 @@ export interface FindOptions {
 }
 
 export interface LoadOptions {
-  cwdPath: string
-  jsonPath: string
-  pkgsPath: string
   dirsOnly?: boolean
   filesOnly?: boolean
+  modify?: RecordModifier
+}
+
+export interface ReloadOptions {
   modify?: RecordModifier
 }
 
@@ -96,11 +97,7 @@ export class Packages {
     this.updateIds(newRecords)
 
     records = records.concat(newRecords)
-    records = await this.reload(
-      cwdPath,
-      records,
-      options.modify
-    )
+    records = await this.reload(cwdPath, records, options)
 
     if (options.appendNew) {
       this.append(cwdPath, records, {
@@ -121,14 +118,12 @@ export class Packages {
     return records
   }
 
-  async load({
-    cwdPath,
-    jsonPath,
-    pkgsPath,
-    dirsOnly,
-    filesOnly,
-    modify,
-  }: LoadOptions): Promise<PackageRecord[]> {
+  async load(
+    cwdPath: string,
+    jsonPath: string,
+    pkgsPath: string,
+    { dirsOnly, filesOnly, modify }: LoadOptions = {}
+  ): Promise<PackageRecord[]> {
     let records: PackageRecord[] = []
 
     if (await pathExists(jsonPath)) {
@@ -140,9 +135,11 @@ export class Packages {
       records = pkgs.sort().map(name => ({ name }))
     }
 
+    this.updateIds(records)
+
     this.append(
       cwdPath,
-      await this.reload(cwdPath, records, modify)
+      await this.reload(cwdPath, records, { modify })
     )
 
     return this.records[cwdPath]
@@ -151,17 +148,18 @@ export class Packages {
   async reload(
     cwdPath: string,
     records: PackageRecord[],
-    modifier: RecordModifier
+    { modify }: ReloadOptions = {}
   ): Promise<PackageRecord[]> {
-    if (!modifier) {
+    if (!modify) {
       return records
     }
 
-    const modify = (
-      record: PackageRecord
-    ): Promise<PackageRecord> => modifier(cwdPath, record)
-
-    return await Promise.all(records.map(modify))
+    return await Promise.all(
+      records.map(
+        (record: PackageRecord): Promise<PackageRecord> =>
+          modify(cwdPath, record)
+      )
+    )
   }
 
   remove(
@@ -185,7 +183,7 @@ export class Packages {
     const records = await this.reload(
       cwdPath,
       this.records[cwdPath],
-      options.modify
+      options
     )
 
     for (const record of records) {
