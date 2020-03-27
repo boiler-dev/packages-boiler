@@ -79,7 +79,7 @@ export class Packages {
         let found = []
 
         if (!options.forceNew && options.matcher) {
-          found = existingRecords.filter(record =>
+          found = existingRecords.filter((record) =>
             options.matcher(arg, record)
           )
         }
@@ -132,7 +132,7 @@ export class Packages {
       const [dirs, paths] = await files.ls(pkgsPath)
       const all = dirs.concat(paths)
       const pkgs = dirsOnly ? dirs : filesOnly ? paths : all
-      records = pkgs.sort().map(name => ({ name }))
+      records = pkgs.sort().map((name) => ({ name }))
     }
 
     this.updateIds(records)
@@ -167,7 +167,7 @@ export class Packages {
     ...records: PackageRecord[]
   ): void {
     this.records[cwdPath] = this.records[cwdPath].filter(
-      record => !records.includes(record)
+      (record) => !records.includes(record)
     )
   }
 
@@ -197,7 +197,8 @@ export class Packages {
 
   updateIds(records: PackageRecord[]): void {
     records.forEach(
-      record => (record.id = record.id || tinyId.generate())
+      (record) =>
+        (record.id = record.id || tinyId.generate())
     )
   }
 }
