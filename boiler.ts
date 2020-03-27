@@ -26,6 +26,11 @@ export const install: ActionBoiler = async () => {
     source: ["fs-extra"],
   })
 
+  actions.push({
+    action: "generate",
+    source: ["git@github.com:boiler-dev/files-boiler.git"],
+  })
+
   return actions
 }
 
