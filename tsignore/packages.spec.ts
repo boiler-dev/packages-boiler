@@ -136,6 +136,6 @@ describe("packages", () => {
       unique: true,
     })
 
-    expect(results).toEqual([{ name: "file2.ts", id: "d" }])
+    expect(results).toEqual([{ name: "file2.ts", id: "e" }])
   })
 })

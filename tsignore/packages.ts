@@ -108,7 +108,7 @@ export class Packages {
     if (options.unique) {
       const found = {}
 
-      records = records.filter(({ name }) => {
+      records = records.reverse().filter(({ name }) => {
         if (!found[name]) {
           return (found[name] = true)
         }
