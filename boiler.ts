@@ -69,7 +69,7 @@ export const uninstall: ActionBoiler = async ({
     uninstall: true,
   })
 
-  await fs.rmdir(
+  await fs.remove(
     join(paths.cwdPath, "test/fixtures/packages")
   )
 
