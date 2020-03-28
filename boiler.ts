@@ -33,16 +33,18 @@ export const install: ActionBoiler = async ({ paths }) => {
     source: ["git@github.com:boiler-dev/files-boiler.git"],
   })
 
-  console.log(
-    join(paths.cwdPath, "test/fixtures/packages/dir1")
+  await fs.ensureFile(
+    join(
+      paths.cwdPath,
+      "test/fixtures/packages/dir1/.gitkeep"
+    )
   )
 
-  await fs.ensureDir(
-    join(paths.cwdPath, "test/fixtures/packages/dir1")
-  )
-
-  await fs.ensureDir(
-    join(paths.cwdPath, "test/fixtures/packages/dir2")
+  await fs.ensureFile(
+    join(
+      paths.cwdPath,
+      "test/fixtures/packages/dir2/.gitkeep"
+    )
   )
 
   await fs.ensureFile(
