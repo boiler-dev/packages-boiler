@@ -4,7 +4,6 @@ import files from "./files"
 import tinyId from "./tinyId"
 
 export interface PackageRecord {
-  arg?: string
   id?: string
   name?: string
   newRecord?: boolean
@@ -87,7 +86,7 @@ export class Packages {
         records = records.concat(found)
 
         if (!found.length) {
-          newRecords.push({ arg, newRecord: true })
+          newRecords.push({ name: arg, newRecord: true })
         }
       }
     } else {

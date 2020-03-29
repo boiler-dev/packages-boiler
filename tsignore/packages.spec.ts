@@ -78,7 +78,7 @@ describe("packages", () => {
     ])
 
     expect(results).toEqual([
-      { arg: "file1.ts", id: "a", newRecord: true },
+      { name: "file1.ts", id: "a", newRecord: true },
     ])
   })
 
@@ -95,7 +95,7 @@ describe("packages", () => {
     expect(results).toEqual([
       { name: "file1.ts", id: "c" },
       { name: "file1.ts", id: "e" },
-      { arg: "newFile.ts", id: "f", newRecord: true },
+      { name: "newFile.ts", id: "f", newRecord: true },
     ])
   })
 
@@ -109,7 +109,7 @@ describe("packages", () => {
       matcher,
       modify: async (cwdPath, record) => ({
         ...record,
-        name: (record.name || record.arg).slice(0, -3),
+        name: record.name.slice(0, -3),
       }),
     })
 
@@ -117,7 +117,6 @@ describe("packages", () => {
       { name: "file1", id: "c" },
       { name: "file1", id: "e" },
       {
-        arg: "newFile.ts",
         id: "f",
         name: "newFile",
         newRecord: true,
